@@ -411,7 +411,7 @@ class AutoNotify {
         $email->setFrom($this->config['from']);
         $email->setSubject($this->config['subject']);
         $email->setBody($msg);
-        
+
         // Send Email
         if (!$email->send()) {
             error_log('Error sending mail: '.$email->getSendError().' with '.json_encode($email));
@@ -433,9 +433,9 @@ class AutoNotify {
     // Go through logs to see if there is a prior alert for this record/event/title
     public function checkForPriorNotification($title, $scope=0) {
         $sql = "SELECT l.data_values, l.ts
-			FROM redcap_log_event l WHERE 
+			FROM redcap_log_event l WHERE
 		 		l.project_id = {$this->project_id}
-			AND l.page = 'PLUGIN' 
+            AND (l.page = 'PLUGIN' OR l.page LIKE '%/plugins/autonotify/%')
 			AND l.description = 'AutoNotify Alert';";
         $q = db_query($sql);
 
@@ -667,7 +667,7 @@ function renderTemporaryMessage($msg, $title='') {
 		t".$id." = setTimeout(function(){
 			$('#".$id."').hide('blind',1500);
 		},10000);
-		$('#".$id."').bind( 'click', function() { 
+		$('#".$id."').bind( 'click', function() {
 			$(this).hide('blind',1000);
 			window.clearTimeout(t".$id.");
 		});
